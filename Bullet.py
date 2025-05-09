@@ -17,6 +17,7 @@ class Bullet(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(pygame.image.load("./assets/images/player/slash.png"), (32, 32))
         else:
             self.image = pygame.transform.scale(pygame.transform.flip(pygame.image.load("./assets/images/player/slash.png"), True, False), (32, 32))
+            self.VELOCITY = -1 * self.VELOCITY
 
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)

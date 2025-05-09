@@ -101,11 +101,16 @@ class Player(pygame.sprite.Sprite):
         self.move()
         self.check_collisions()
         self.check_animations()
+
+        #Update the players mask
         self.mask = pygame.mask.from_surface(self.image)
 
     def move(self):
         """Move the player"""
+        #Set the acceleration vector
         self.acceleration = pygame.math.Vector2(0, self.VERTICAL_ACCELERATION)
+
+        #If the user is pressing a key, set the x-component of the acceleration to be non-zero
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.acceleration.x = -1 * self.HORIZONTAL_ACCELERATION
@@ -119,10 +124,12 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.animate(self.idle_left_sprites, .5)
 
+        #Calculate new kinematics values: (4, 1) + (2, 8) = (6, 9)
         self.acceleration.x -= self.velocity.x * self.HORIZONTAL_FRICTION
         self.velocity += self.acceleration
         self.position += self.velocity + 0.5 * self.acceleration
 
+        #Update rect based on kinematic calculations and add wrap around movement
         if self.position.x < 0:
             self.position.x = self.WINDOW_WIDTH
         elif self.position.x > self.WINDOW_WIDTH:
@@ -132,30 +139,34 @@ class Player(pygame.sprite.Sprite):
 
     def check_collisions(self):
         """Check for collisions with platforms and portals"""
+        #Collision check between player and platforms when falling
         if self.velocity.y > 0:
-            collided_platforms = pygame.sprite.spritecollide(
-                self, self.platform_group, False, pygame.sprite.collide_mask
-            )
+            collided_platforms = pygame.sprite.spritecollide(self, self.platform_group, False,
+                                                             pygame.sprite.collide_mask)
             if collided_platforms:
                 self.position.y = collided_platforms[0].rect.top + 5
                 self.velocity.y = 0
 
+        #Collision check between player and platform if jumping up
         if self.velocity.y < 0:
-            collided_platforms = pygame.sprite.spritecollide(
-                self, self.platform_group, False, pygame.sprite.collide_mask
-            )
+            collided_platforms = pygame.sprite.spritecollide(self, self.platform_group, False,
+                                                             pygame.sprite.collide_mask)
             if collided_platforms:
                 self.velocity.y = 0
                 while pygame.sprite.spritecollide(self, self.platform_group, False):
                     self.position.y += 1
                     self.rect.bottomleft = self.position
 
+        #Collision check for portals
         if pygame.sprite.spritecollide(self, self.portal_group, False):
             self.portal_sound.play()
+            #Determine which portal you are moving to
+            #Left and right
             if self.position.x > self.WINDOW_WIDTH // 2:
                 self.position.x = 86
             else:
                 self.position.x = self.WINDOW_WIDTH - 150
+            #Top and bottom
             if self.position.y > self.WINDOW_HEIGHT // 2:
                 self.position.y = 64
             else:

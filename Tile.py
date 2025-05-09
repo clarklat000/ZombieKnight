@@ -14,37 +14,32 @@ class Tile(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(
                 pygame.image.load("./assets/images/tiles/Tile (2).png"), (32, 32)
             )
-            if sub_group:
-                sub_group.add(self)
+            sub_group.add(self)
         elif image_int == 3:
             self.image = pygame.transform.scale(
                 pygame.image.load("./assets/images/tiles/Tile (3).png"), (32, 32)
             )
-            if sub_group:
-                sub_group.add(self)
+            sub_group.add(self)
         elif image_int == 4:
             self.image = pygame.transform.scale(
                 pygame.image.load("./assets/images/tiles/Tile (4).png"), (32, 32)
             )
-            if sub_group:
-                sub_group.add(self)
+            sub_group.add(self)
+
         elif image_int == 5:
             self.image = pygame.transform.scale(
                 pygame.image.load("./assets/images/tiles/Tile (5).png"), (32, 32)
             )
-            if sub_group:
-                sub_group.add(self)
-        else:
+            sub_group.add(self)
 
-            self.image = pygame.Surface((32, 32))
-            self.image.fill((255, 0, 255))
 
-        # Add every tile to the main group
+
+        #Add every tile to the main group
         main_group.add(self)
 
-
+        #Get the rect of the image and position within the grid
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-
+        #Create a mask for better player collisions
         self.mask = pygame.mask.from_surface(self.image)
